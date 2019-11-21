@@ -30,7 +30,7 @@ public class PlaceServer {
         } else {
             while(true) {
                 try (
-                        ServerSocket ss1 = new ServerSocket(Integer.parseInt(args[1]));
+                        ServerSocket ss1 = new ServerSocket(Integer.parseInt(args[0]));
                         Socket socket = ss1.accept();
                         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
