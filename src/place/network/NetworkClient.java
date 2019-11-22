@@ -1,16 +1,17 @@
 package place.network;
 
 import place.PlaceBoard;
+import place.PlaceColor;
 import place.PlaceException;
-import place.network.PlaceRequest;
+import place.PlaceTile;
+import place.model.ClientModel;
 
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
-import static place.network.PlaceRequest.*;
+
+import static place.network.PlaceRequest.RequestType.*;
 
 /**
  * The client side network interface to a Place Board server.
@@ -22,6 +23,9 @@ import static place.network.PlaceRequest.*;
  * @author Robert St Jacques @ RIT SE
  * @author Sean Strout @ RIT CS
  * @author James Heliotis @ RIT CS
+ * @author Maham Imtiaz
+ * @author Aubrey Tarmu
+ * @author Danilo Sosa
  */
 public class NetworkClient {
 
@@ -51,18 +55,25 @@ public class NetworkClient {
     /**
      * The {@link Scanner} used to read requests from the Place server.
      */
-    private Scanner networkIn;
+    private ObjectInputStream networkIn;
 
     /**
      * The {@link PrintStream} used to write responses to the Place server.
      */
-    private PrintStream networkOut;
+    private ObjectOutputStream networkOut;
 
     /**
      * The {@link PlaceBoard} used to keep track of the state of the game.
      */
-    private PlaceBoard placeGame;
-
+    private PlaceBoard board;
+    /**
+     * The model acts as the inbetween for the boards
+     */
+    private ClientModel model;
+    /**
+     * The income request from server
+     */
+    PlaceRequest<?> req;
     /**
      * Sentinel used to control the main game loop.
      */
@@ -97,21 +108,22 @@ public class NetworkClient {
      *                 must be updated upon receiving server messages
      * @throws place.PlaceException If there is a problem opening the connection
      */
-    // TODO check if we need to pass username to this class
-    public NetworkClient( String hostname, int port, PlaceBoard model, String username ) throws PlaceException {
+    public NetworkClient(String hostname, int port, ClientModel model, String username ) throws PlaceException {
 
         try {
-
             this.sock = new Socket(hostname, port);
-            this.networkIn = new Scanner( sock.getInputStream() );
-            this.networkOut = new PrintStream( sock.getOutputStream() );
-            this.placeGame = model;
+            System.out.println("hello world 1");
+            this.networkIn = new ObjectInputStream( sock.getInputStream() );
+            this.networkOut = new ObjectOutputStream( sock.getOutputStream() );
             this.go = true;
 
             // messages from server
-            String request = this.networkIn.next();
-            String arguments = this.networkIn.nextLine();
+            System.out.println("hello world 2");
+
             NetworkClient.dPrint("Connected to server " + this.sock);
+            login(username);
+            System.out.println("hello world 3");
+
         }
         catch (IOException e) {
             throw new PlaceException(e);
@@ -126,11 +138,18 @@ public class NetworkClient {
         netThread.start();
     }
 
-    // TODO check if we need connect
 
     /** Send out login request to server */
     public void login(String username) {
-         this.networkOut.println(PlaceRequest.RequestType.LOGIN + " " + username);
+
+        try {
+            this.networkOut.writeUnshared(PlaceRequest.RequestType.LOGIN + " " + username);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    void setTile(int x, int y, String usr, PlaceColor color){
+        board.setTile(new PlaceTile(x,y,usr,color));
     }
 
     // TODO add method for change tile
@@ -174,16 +193,23 @@ public class NetworkClient {
      * outside will call it or try to start a thread on it.
      */
     private void run() {
-
+        System.out.println("hello world");
         while (this.goodToGo()) {
             try {
-                String request = this.networkIn.next();
-                String arguments = this.networkIn.nextLine().trim();
+
+                String request = this.networkIn.readUTF();
+                NetworkClient.dPrint("dsfsdf");
+                dPrint("dsfsdf");
+                String arguments = this.networkIn.readUTF().trim();
                 NetworkClient.dPrint("Next message in = \"" + request + '"');
-
-                switch (request) {
-
-                    // TODO add PlaceRequests from server to client
+                req = (PlaceRequest<?>) networkIn.readUnshared();
+                if (req.getType() == LOGIN_SUCCESS) {
+                    NetworkClient.dPrint("login successful");
+                }
+                if (req.getType() == BOARD) {
+                    board = (PlaceBoard) req.getData();
+                    model.setBoard(board);
+    //TODO GET THIS TO OVERRIDE THE MODEL BOARD, AND THEN GET THE MODEL BOARD TO PRINT
                 }
             }
             catch (NoSuchElementException e) {

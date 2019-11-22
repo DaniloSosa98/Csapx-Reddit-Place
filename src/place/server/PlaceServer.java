@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Set;
 
 /**
  * The Place server is run on the command line as:
@@ -24,6 +25,7 @@ public class PlaceServer {
      *
      * @param args the command line arguments
      */
+    Set<String> usersLogged;
     public static void main(String[] args) {
         if (args.length != 2) {
             System.out.println("Usage: java PlaceServer port DIM");
@@ -45,5 +47,8 @@ public class PlaceServer {
                 }
             }
         }
+    }
+    void verifyLogin(){
+
     }
 }

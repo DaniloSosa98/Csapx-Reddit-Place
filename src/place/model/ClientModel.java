@@ -1,6 +1,8 @@
 package place.model;
 
+import javafx.scene.paint.Color;
 import place.PlaceBoard;
+import place.PlaceColor;
 import place.PlaceTile;
 
 import java.util.LinkedList;
@@ -26,6 +28,19 @@ public class ClientModel {
      */
     public void addObserver(Observer<ClientModel, PlaceTile> observer) {
         this.observers.add(observer);
+    }
+//
+//    public void setTile(int x, int y, String user, PlaceColor color){
+//        PlaceTile t = new PlaceTile(x,y,user,color);
+//        board.setTile(t);
+//        System.out.println("called from setBoard");
+//    }
+   public void setBoard(PlaceBoard board){
+        this.board = board;
+        notifyObservers(null);
+    }
+    public   void printBoard(){
+        System.out.println(board);
     }
 
     /**

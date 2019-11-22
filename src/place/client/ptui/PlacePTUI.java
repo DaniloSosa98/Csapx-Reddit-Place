@@ -8,7 +8,6 @@ import place.model.Observer;
 import place.network.NetworkClient;
 import place.network.PlaceRequest;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -24,7 +23,7 @@ public class PlacePTUI  extends ConsoleApplication implements Observer<ClientMod
     /**
      * conc_model for the game
      */
-    private PlaceBoard model;
+    private ClientModel model;
 
     /**
      * Connection to network interface to server
@@ -46,24 +45,23 @@ public class PlacePTUI  extends ConsoleApplication implements Observer<ClientMod
      */
     @Override
     public void update(ClientModel model, PlaceTile tile) {
+        model.printBoard();
 
     }
+
 
     @Override
     public void init() {
         try {
             List<String> args = super.getArguments();
-
+            model = new ClientModel();
             // Get host info from command line
             String host = args.get( 0 );
             int port = Integer.parseInt( args.get( 1 ) );
             String username = args.get(2);
 
-            // TODO Create uninitialized board.
-//            this.model = new PlaceBoard();
-            // Create the network connection.
-
-            this.serverConn = new NetworkClient( host, port, this.model, username);
+            this.serverConn = new NetworkClient( host, port, model, username);
+            this.serverConn.startListener();
         }
         catch (PlaceException |
         ArrayIndexOutOfBoundsException |
@@ -75,6 +73,27 @@ public class PlacePTUI  extends ConsoleApplication implements Observer<ClientMod
 
     @Override
     public void go(Scanner consoleIn, PrintWriter consoleOut) {
+
+        this.userIn = userIn;
+        this.userOut = userOut;
+
+        // Connect UI to model. Can't do it sooner because streams not set up.
+        this.model.addObserver( this );
+
+        // Start the network listener thread
+        this.serverConn.startListener();
+
+        // Manually force a display of all board state, since it's too late
+        // to trigger update().
+//        this.refresh();
+        while ( true ) {
+            try {
+                this.wait();
+            }
+            catch( InterruptedException ie ) {
+
+            }
+        }
 
     }
 
@@ -96,28 +115,6 @@ public class PlacePTUI  extends ConsoleApplication implements Observer<ClientMod
             ConsoleApplication.launch(PlacePTUI.class, args);
         }
 
-//        // Get host info from command line
-//        String host = args[1];
-//        // get username from command line
-//        username = args[2];
-//        int port = Integer.parseInt(host);
-//        try (
-//                Socket plySocket1 = new Socket(args[0], port);
-//
-//                // network out to server
-//                PrintWriter out = new PrintWriter(plySocket1.getOutputStream(), true);
-//
-//                BufferedReader in = new BufferedReader(new InputStreamReader(plySocket1.getInputStream()));
-//                BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in)); //for the local comp
-//
-//
-//        ) {while(true) {
-//            out.println("is connected");
-//            String details = in.readLine();
-//        }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
     }
 
 
