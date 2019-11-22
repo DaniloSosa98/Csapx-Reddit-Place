@@ -112,17 +112,14 @@ public class NetworkClient {
 
         try {
             this.sock = new Socket(hostname, port);
-            System.out.println("hello world 1");
             this.networkIn = new ObjectInputStream( sock.getInputStream() );
             this.networkOut = new ObjectOutputStream( sock.getOutputStream() );
             this.go = true;
 
             // messages from server
-            System.out.println("hello world 2");
 
             NetworkClient.dPrint("Connected to server " + this.sock);
             login(username);
-            System.out.println("hello world 3");
 
         }
         catch (IOException e) {
@@ -143,7 +140,11 @@ public class NetworkClient {
     public void login(String username) {
 
         try {
-            this.networkOut.writeUnshared(PlaceRequest.RequestType.LOGIN + " " + username);
+            System.out.println(LOGIN);
+            PlaceRequest<String> boardReq = new PlaceRequest<>(LOGIN, username);
+
+            this.networkOut.writeUnshared(boardReq);
+            networkOut.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -196,27 +197,20 @@ public class NetworkClient {
         while (this.goodToGo()) {
             try {
 
-                PlaceRequest<?> req = (PlaceRequest<?>) networkIn.readUnshared();
-                System.out.println("DFs" +req.toString());
-                if (req.getType() == PlaceRequest.RequestType.BOARD) {
-                    PlaceBoard board = (PlaceBoard) req.getData();
-                    System.out.println(board);
-                }
+                PlaceRequest<?> req = (PlaceRequest<?>) networkIn.readObject();
+                System.out.println("DFs : " +req);
                 if (req.getType() == LOGIN_SUCCESS) {
                     System.out.println("login successful");
                 }
-                if (req.getType() == LOGIN) {
-                    System.out.println("login");
-                }
-                if (req.getType() == BOARD) {
-                    System.out.println("hello world FInal");
+                else if (req.getType() == BOARD) {
+                    System.out.println("hello world board");
                     board = (PlaceBoard) req.getData();
                     model.setBoard(board);
     //TODO GET THIS TO OVERRIDE THE MODEL BOARD, AND THEN GET THE MODEL BOARD TO PRINT
                 }
             }
             catch (NoSuchElementException e) {
-                this.error("lost Connextion to server.");
+                this.error("lost Connection to server.");
                 this.stop();
             }
             catch (Exception e) {
