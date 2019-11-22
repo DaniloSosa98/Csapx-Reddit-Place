@@ -97,7 +97,8 @@ public class NetworkClient {
      *                 must be updated upon receiving server messages
      * @throws place.PlaceException If there is a problem opening the connection
      */
-    public NetworkClient( String hostname, int port, PlaceBoard model ) throws PlaceException {
+    // TODO check if we need to pass username to this class
+    public NetworkClient( String hostname, int port, PlaceBoard model, String username ) throws PlaceException {
 
         try {
 
