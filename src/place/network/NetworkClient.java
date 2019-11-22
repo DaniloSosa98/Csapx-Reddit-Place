@@ -193,20 +193,23 @@ public class NetworkClient {
      * outside will call it or try to start a thread on it.
      */
     private void run() {
-        System.out.println("hello world");
         while (this.goodToGo()) {
             try {
 
-                String request = this.networkIn.readUTF();
-                NetworkClient.dPrint("dsfsdf");
-                dPrint("dsfsdf");
-                String arguments = this.networkIn.readUTF().trim();
-                NetworkClient.dPrint("Next message in = \"" + request + '"');
-                req = (PlaceRequest<?>) networkIn.readUnshared();
+                PlaceRequest<?> req = (PlaceRequest<?>) networkIn.readUnshared();
+                System.out.println("DFs" +req.toString());
+                if (req.getType() == PlaceRequest.RequestType.BOARD) {
+                    PlaceBoard board = (PlaceBoard) req.getData();
+                    System.out.println(board);
+                }
                 if (req.getType() == LOGIN_SUCCESS) {
-                    NetworkClient.dPrint("login successful");
+                    System.out.println("login successful");
+                }
+                if (req.getType() == LOGIN) {
+                    System.out.println("login");
                 }
                 if (req.getType() == BOARD) {
+                    System.out.println("hello world FInal");
                     board = (PlaceBoard) req.getData();
                     model.setBoard(board);
     //TODO GET THIS TO OVERRIDE THE MODEL BOARD, AND THEN GET THE MODEL BOARD TO PRINT

@@ -72,7 +72,7 @@ public class PlacePTUI  extends ConsoleApplication implements Observer<ClientMod
     }
 
     @Override
-    public void go(Scanner consoleIn, PrintWriter consoleOut) {
+    public synchronized void go(Scanner consoleIn, PrintWriter consoleOut) {
 
         this.userIn = userIn;
         this.userOut = userOut;
@@ -88,6 +88,7 @@ public class PlacePTUI  extends ConsoleApplication implements Observer<ClientMod
 //        this.refresh();
         while ( true ) {
             try {
+
                 this.wait();
             }
             catch( InterruptedException ie ) {
