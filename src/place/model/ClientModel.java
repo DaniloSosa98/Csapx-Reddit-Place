@@ -30,11 +30,11 @@ public class ClientModel {
         this.observers.add(observer);
     }
 //
-//    public void setTile(int x, int y, String user, PlaceColor color){
-//        PlaceTile t = new PlaceTile(x,y,user,color);
-//        board.setTile(t);
-//        System.out.println("called from setBoard");
-//    }
+    public void setTile(PlaceTile p){
+        board.setTile(p);
+        System.out.println("called from setBoard");
+        notifyObservers(p);
+    }
    public void setBoard(PlaceBoard board){
         this.board = board;
         notifyObservers(null);
@@ -43,7 +43,6 @@ public class ClientModel {
         System.out.println(board);
         System.out.println();
     }
-
     /**
      * Notify observers the model has changed.
      */

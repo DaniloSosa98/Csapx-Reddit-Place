@@ -93,8 +93,8 @@ public class PlacePTUI  extends ConsoleApplication implements Observer<ClientMod
         this.userIn = consoleIn;
         this.userOut = consoleOut;
         isReady =true;
-        refresh();
         this.serverConn.startListener();
+        refresh();
 
         while ( true ) {
             try {
@@ -135,7 +135,7 @@ public class PlacePTUI  extends ConsoleApplication implements Observer<ClientMod
                 if(color.equals(PlaceColor.BLACK)){
                     targetColor = PlaceColor.BLACK;
 
-                } else if (color.equals(PlaceColor.RED)){
+                } else if (color.equals(PlaceColor.RED.getName())){
                     targetColor = PlaceColor.RED;
                 }
                 else{
