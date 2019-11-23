@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
+import static java.lang.Thread.sleep;
+
 public class PlacePTUI  extends ConsoleApplication implements Observer<ClientModel, PlaceTile> {
 
 /** all the colors, this is ugly, let's find a better solution **/
@@ -49,6 +51,7 @@ public class PlacePTUI  extends ConsoleApplication implements Observer<ClientMod
      * Connection to network interface to server
      */
     boolean isReady;
+    int timer=1;
     @Override
     public void update(ClientModel model, PlaceTile tile) {
         refresh();
@@ -95,16 +98,8 @@ public class PlacePTUI  extends ConsoleApplication implements Observer<ClientMod
         isReady =true;
         this.serverConn.startListener();
         refresh();
+        System.out.println("hello called from go");
 
-        while ( true ) {
-            try {
-
-                this.wait();
-            }
-            catch( InterruptedException ie ) {
-
-            }
-        }
 
     }
 
@@ -112,7 +107,12 @@ public class PlacePTUI  extends ConsoleApplication implements Observer<ClientMod
      * IDK IF THIS WILL BE NECCESSARY
      * @return
      */
-    boolean canMove(){
+    synchronized boolean canPlace(){
+        try {
+            sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return  true;
     }
 
@@ -120,24 +120,26 @@ public class PlacePTUI  extends ConsoleApplication implements Observer<ClientMod
      * refreshs the board for the usr and also gets the input from the usr.
      */
     private void refresh() {
-        System.err.println(isReady);
-        if ( canMove() &&isReady) {
+        if ( isReady) {
             System.out.println("SDF");
             model.printBoard();
 
             do {
                 model.printBoard();
-                this.userOut.flush();
-                int row = this.userIn.nextInt();
-                int col = this.userIn.nextInt();
-                int color = userIn.nextInt();
-                userOut.println(colors);
+                if(canPlace()) {
+                    this.userOut.flush();
+                    System.out.println("Change tile: row col color?");
+                    int row = this.userIn.nextInt();
+                    int col = this.userIn.nextInt();
+                    int color = userIn.nextInt();
+                    userOut.println(colors);
 
-                PlaceColor targetColor= colors.get(color);
+                    PlaceColor targetColor = colors.get(color);
 
-                userOut.println(targetColor);
-                PlaceTile newTile = new PlaceTile(row,col,username,targetColor);
-                serverConn.setTile(newTile);
+                    userOut.println(targetColor);
+                    PlaceTile newTile = new PlaceTile(row, col, username, targetColor);
+                    serverConn.setTile(newTile);
+                }
             } while (true);
         }
     }
