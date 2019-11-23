@@ -115,14 +115,16 @@ public class NetworkClient {
             this.networkIn = new ObjectInputStream( sock.getInputStream() );
             this.networkOut = new ObjectOutputStream( sock.getOutputStream() );
             this.go = true;
-
+            this.model = model;
             // messages from server
 
             NetworkClient.dPrint("Connected to server " + this.sock);
             login(username);
+            verifyLogin();
+            getBoard();
 
         }
-        catch (IOException e) {
+        catch (IOException | ClassNotFoundException e) {
             throw new PlaceException(e);
         }
     }
@@ -135,22 +137,49 @@ public class NetworkClient {
         netThread.start();
     }
 
+    private void getBoard() throws IOException, ClassNotFoundException {
+        PlaceRequest<?> req = (PlaceRequest<?>) networkIn.readObject();
+        if (req.getType() == BOARD) {
+            System.out.println("hello board");
+            board = (PlaceBoard) req.getData();
+            model.setBoard(board);
+            //TODO GET THIS TO OVERRIDE THE MODEL BOARD, AND THEN GET THE MODEL BOARD TO PRINT
+        }
+
+    }
 
     /** Send out login request to server */
-    public void login(String username) {
+    private void login(String username) {
 
         try {
             System.out.println(LOGIN);
-            PlaceRequest<String> boardReq = new PlaceRequest<>(LOGIN, username);
+            PlaceRequest<String> loginReq = new PlaceRequest<>(LOGIN, username);
 
-            this.networkOut.writeUnshared(boardReq);
+            this.networkOut.writeUnshared(loginReq);
             networkOut.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    void setTile(int x, int y, String usr, PlaceColor color){
-        board.setTile(new PlaceTile(x,y,usr,color));
+    private void verifyLogin() throws IOException, ClassNotFoundException {
+
+        PlaceRequest<?> req = (PlaceRequest<?>) networkIn.readObject();
+//                PlaceRequest<?> req1= (PlaceRequest<?>) networkIn.readObject();
+        System.out.println("DFs : " +req);
+        if (req.getType() == LOGIN_SUCCESS) {
+            System.out.println("login successful");
+        }
+    }
+    public void setTile(PlaceTile plt){
+        board.setTile(plt);
+        PlaceRequest<PlaceTile> tileChangeRequest = new PlaceRequest<>(CHANGE_TILE,plt);
+
+        try {
+            networkOut.writeUnshared(tileChangeRequest);
+            networkOut.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     // TODO add method for change tile
@@ -196,18 +225,11 @@ public class NetworkClient {
     private void run() {
         while (this.goodToGo()) {
             try {
+//                setTile();
 
-                PlaceRequest<?> req = (PlaceRequest<?>) networkIn.readObject();
-                System.out.println("DFs : " +req);
-                if (req.getType() == LOGIN_SUCCESS) {
-                    System.out.println("login successful");
-                }
-                else if (req.getType() == BOARD) {
-                    System.out.println("hello world board");
-                    board = (PlaceBoard) req.getData();
-                    model.setBoard(board);
-    //TODO GET THIS TO OVERRIDE THE MODEL BOARD, AND THEN GET THE MODEL BOARD TO PRINT
-                }
+//                PlaceRequest<?> req = (PlaceRequest<?>) networkIn.readObject();
+//
+
             }
             catch (NoSuchElementException e) {
                 this.error("lost Connection to server.");

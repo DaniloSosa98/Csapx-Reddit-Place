@@ -100,6 +100,9 @@ public abstract class ConsoleApplication {
             catch( InterruptedException ie ) {
                 System.err.println( "Console event thread interrupted" );
             }
+            catch (Exception e){
+                e.printStackTrace();
+            }
             finally {
                 ptuiApp.stop();
             }
@@ -119,7 +122,6 @@ public abstract class ConsoleApplication {
         public Runner( ConsoleApplication ptuiApp ) { this.ptuiApp = ptuiApp; }
 
 
-        //TODO WHAT IS IT THAT WE HAVE TO REMOVE, OR WHAT SHOULD WE JUST BRING INTO THE PTUI CLIENT CLASS
         public void run() {
             // We don't put the PrintWriter in try-with-resources because
             // we don't want it to be closed. The Scanner can close.
@@ -133,8 +135,6 @@ public abstract class ConsoleApplication {
                     }
                     catch( Exception e ) {
                         e.printStackTrace();
-//                        if ( out != null ) {
-//                            out.println( "\nRESTARTING...\n" );
 //                        }
                     }
 //                } while ( out != null );

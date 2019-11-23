@@ -41,14 +41,17 @@ public class ClientModel {
     }
     public   void printBoard(){
         System.out.println(board);
+        System.out.println();
     }
 
     /**
      * Notify observers the model has changed.
      */
     private void notifyObservers(PlaceTile tile){
+        System.out.println(observers.size());
         for (Observer<ClientModel, PlaceTile> observer: observers) {
             observer.update(this, tile);
         }
+        System.out.println(observers.size());
     }
 }
