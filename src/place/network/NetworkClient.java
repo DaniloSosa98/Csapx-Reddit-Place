@@ -235,12 +235,7 @@ public class NetworkClient {
                     System.out.println("tile changed: " +req);
                 }
                 else if(req.getType()==ERROR) {
-//                    this.stop();
                     this.error("usr name already exists");
-
-                }
-                else if(req!=null){
-                    this.error("unexpected input");
                 }
 
             }
