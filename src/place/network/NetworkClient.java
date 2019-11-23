@@ -187,12 +187,6 @@ public class NetworkClient {
             e.printStackTrace();
         }
     }
-    public  void getBackTile(){
-
-
-    }
-
-
     // TODO add method for change tile
     // TODO add method for tile changed
 
@@ -242,8 +236,11 @@ public class NetworkClient {
                 }
                 else if(req.getType()==ERROR) {
 //                    this.stop();
-                    this.error("user name already exists");
+                    this.error("usr name already exists");
 
+                }
+                else if(req!=null){
+                    this.error("unexpected input");
                 }
 
             }

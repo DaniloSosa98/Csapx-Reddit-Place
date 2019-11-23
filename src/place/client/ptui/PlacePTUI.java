@@ -21,7 +21,7 @@ import java.util.Scanner;
 public class PlacePTUI  extends ConsoleApplication implements Observer<ClientModel, PlaceTile> {
 
 /** all the colors, this is ugly, let's find a better solution **/
-    private static HashMap<String, PlaceColor> colors = new HashMap<>();
+    private static HashMap<Integer, PlaceColor> colors = new HashMap<>();
     /** Client's username */
     private static String username;
 
@@ -130,30 +130,16 @@ public class PlacePTUI  extends ConsoleApplication implements Observer<ClientMod
                 this.userOut.flush();
                 int row = this.userIn.nextInt();
                 int col = this.userIn.nextInt();
-                String color = userIn.next();
-                PlaceColor targetColor;
-                if(color.equals(PlaceColor.BLACK)){
-                    targetColor = PlaceColor.BLACK;
+                int color = userIn.nextInt();
+                userOut.println(colors);
 
-                } else if (color.equals(PlaceColor.RED.getName())){
-                    targetColor = PlaceColor.RED;
-                }
-                else{
-                    targetColor = PlaceColor.WHITE;
-                }
+                PlaceColor targetColor= colors.get(color);
+
+                userOut.println(targetColor);
                 PlaceTile newTile = new PlaceTile(row,col,username,targetColor);
                 serverConn.setTile(newTile);
-
-//                PlaceColor pc = new
-//                PlaceColor pc = new PlaceColor("DFS",userIn.nextInt(),userIn.nextInt(),userIn.nextInt())
-//                if (this.model.isValidMove(row, col)) {
-//                    this.userOut.println(this.userIn.nextLine());
-//                this.serverConn.setTile(row, col);
-//                    done = true;
-//                }
             } while (true);
         }
-//        System.out.println("DasdF");
     }
     @Override
     public void stop() {
@@ -170,10 +156,11 @@ public class PlacePTUI  extends ConsoleApplication implements Observer<ClientMod
             System.exit(1);
         }
         else {
+            colors.put(0,PlaceColor.BLACK);
+            colors.put(5,PlaceColor.RED);
+            colors.put(4,PlaceColor.WHITE);
             ConsoleApplication.launch(PlacePTUI.class, args);
-            colors.put(PlaceColor.BLACK.getName(),PlaceColor.BLACK);
-            colors.put(PlaceColor.RED.getName(),PlaceColor.RED);
-            colors.put(PlaceColor.WHITE.getName(),PlaceColor.WHITE);
+
         }
 
     }
