@@ -9,6 +9,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -95,7 +96,9 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
         generateBoard(bp,gp);
 
         final ToggleGroup group = new ToggleGroup();
-        GridPane buttons = new GridPane();
+        //GridPane buttons = new GridPane();
+        FlowPane fp = new FlowPane();
+        fp.setPrefWrapLength(gp.getWidth());
         for (int i = 0; i < 16; i++) {
             ToggleButton tb = new ToggleButton();
             if (i<10){
@@ -106,8 +109,10 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
             }
             tb.setToggleGroup(group);
             tb.setStyle(toggleColor(i));
-            tb.setPrefSize(31, 31);
-            buttons.add(tb, i, 0);
+            tb.autosize();
+            //tb.setPrefSize(31, 31);
+            //buttons.add(tb, i, 0);
+            fp.getChildren().addAll(tb);
             tb.setOnMouseClicked(new EventHandler<MouseEvent>()
             {
                 @Override
@@ -123,7 +128,8 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
                 }
             });
         }
-        bp.setBottom(buttons);
+        //bp.setBottom(buttons);
+        bp.setBottom(fp);
         Scene scene = new Scene(bp);
         primaryStage.setScene(scene);
         primaryStage.setTitle(this.username);
