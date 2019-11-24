@@ -62,6 +62,9 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
      */
     boolean isReady;
     private int selectedColor;
+    Rectangle[][] theInputs;
+//    ArrayList
+
     public void init(){
         try{
             List<String> args = getParameters().getRaw();
@@ -131,7 +134,7 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
 
         int dimension = model.getDimension();
         Random rand = new Random();
-
+        theInputs = new Rectangle[dimension][dimension];
         for (int row = 0; row < dimension; row++) {
             for (int col = 0; col < dimension; col++) {
                 Rectangle r = new Rectangle();
@@ -139,6 +142,7 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
                 //System.out.println(selectedColor);
                 final int iRow = row;
                 final int iColl = col;
+
                 r.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent t) {
@@ -148,10 +152,12 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
 
                 });
                 r.setHeight(50);
+
                 r.setWidth(50);
-                int color = rand.nextInt(16);
+                int color = model.getTile(row,col).getColor().getNumber();
                 r.setFill(this.colors(color));
                 gp.add(r, col, row);
+                theInputs[row][col]=r;
             }
         }
 
@@ -160,6 +166,16 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
 
 
     void refresh(){
+        if(theInputs!=null) {
+            System.out.println("refresh");
+
+            theInputs[model.getChangedTile().getRow()][model.getChangedTile().getCol()].
+                    setFill(this.colors(model.getChangedTile().getColor().getNumber()));
+
+            System.out.println("refresh");
+        }
+//        System.out.println("DSF");
+
 
     }
 
