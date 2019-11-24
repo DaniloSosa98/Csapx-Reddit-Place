@@ -1,6 +1,7 @@
 package place.client.gui;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -71,6 +72,7 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
             this.model = new ClientModel();
             this.model.addObserver(this);
             this.serverConn = new NetworkClient(host, port, model, username);
+            serverConn.startListener();
         }
         catch(ArrayIndexOutOfBoundsException | NumberFormatException | PlaceException e){
             System.out.println(e);
@@ -88,7 +90,7 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
         BorderPane bp = new BorderPane();
         GridPane gp = new GridPane();
 
-        int dimension = 10;
+        int dimension = model.getDimension();
         Random rand = new Random();
 
         for (int row = 0; row < dimension; row++) {
@@ -96,10 +98,13 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
                 Rectangle r = new Rectangle();
                 //Color c = this.colors(selectedColor);
                 //System.out.println(selectedColor);
+                final int iRow = row;
+                final int iColl = col;
                 r.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent t) {
-                        r.setFill(colors(selectedColor));
+//                        r.setFill(colors(selectedColor));
+                        serverConn.setTile(new PlaceTile(iRow,iColl,username,convertToPlaceColor(selectedColor)));
                     }
 
                 });
@@ -149,8 +154,15 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
         primaryStage.show();
     }
 
+    void refresh(){
+
+    }
+
+
+
     @Override
     public void update(ClientModel model, PlaceTile tile) {
+        Platform.runLater(this::refresh);
     }
 
     public static void main(String[] args) {
@@ -240,6 +252,15 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
         }
     }
 
+
+    public PlaceColor convertToPlaceColor(int selectedColor){
+        for (PlaceColor color : PlaceColor.values()){
+            if(selectedColor == color.getNumber()){
+                return color;
+            }
+        }
+        return  null;
+    }
 
     //EventHandler<>
 

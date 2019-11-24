@@ -53,4 +53,7 @@ public class ClientModel {
         }
         System.out.println(observers.size());
     }
+    public int getDimension(){
+        return board.DIM;
+    }
 }

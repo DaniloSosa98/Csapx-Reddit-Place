@@ -232,6 +232,7 @@ public class NetworkClient {
                 PlaceRequest<?> req = (PlaceRequest<?>) networkIn.readObject();
                 if(req.getType()==TILE_CHANGED){
                     System.out.println("tile changed: " +req);
+                    model.printBoard();
                 }
                 else if(req.getType()==ERROR) {
                     this.error("usr name already exists");
