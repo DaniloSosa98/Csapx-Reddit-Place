@@ -89,34 +89,7 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
     public void start(Stage primaryStage) throws Exception {
         BorderPane bp = new BorderPane();
         GridPane gp = new GridPane();
-
-        int dimension = model.getDimension();
-        Random rand = new Random();
-
-        for (int row = 0; row < dimension; row++) {
-            for (int col = 0; col < dimension; col++) {
-                Rectangle r = new Rectangle();
-                //Color c = this.colors(selectedColor);
-                //System.out.println(selectedColor);
-                final int iRow = row;
-                final int iColl = col;
-                r.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent t) {
-//                        r.setFill(colors(selectedColor));
-                        serverConn.setTile(new PlaceTile(iRow,iColl,username,convertToPlaceColor(selectedColor)));
-                    }
-
-                });
-                r.setHeight(50);
-                r.setWidth(50);
-                int color = rand.nextInt(16);
-                r.setFill(this.colors(color));
-                gp.add(r, col, row);
-            }
-        }
-
-        bp.setCenter(gp);
+        generateBoard(bp,gp);
 
         final ToggleGroup group = new ToggleGroup();
         GridPane buttons = new GridPane();
@@ -153,6 +126,38 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
         primaryStage.setTitle(this.username);
         primaryStage.show();
     }
+
+    void generateBoard(BorderPane bp, GridPane gp){
+
+        int dimension = model.getDimension();
+        Random rand = new Random();
+
+        for (int row = 0; row < dimension; row++) {
+            for (int col = 0; col < dimension; col++) {
+                Rectangle r = new Rectangle();
+                //Color c = this.colors(selectedColor);
+                //System.out.println(selectedColor);
+                final int iRow = row;
+                final int iColl = col;
+                r.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent t) {
+//                        r.setFill(colors(selectedColor));
+                        serverConn.setTile(new PlaceTile(iRow,iColl,username,convertToPlaceColor(selectedColor)));
+                    }
+
+                });
+                r.setHeight(50);
+                r.setWidth(50);
+                int color = rand.nextInt(16);
+                r.setFill(this.colors(color));
+                gp.add(r, col, row);
+            }
+        }
+
+        bp.setCenter(gp);
+    }
+
 
     void refresh(){
 

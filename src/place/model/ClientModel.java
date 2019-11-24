@@ -18,8 +18,12 @@ public class ClientModel {
     /** the actual board that holds the tiles */
     private PlaceBoard board;
 
+    private PlaceTile changedTile;
+
     /** observers of the model (PlacePTUI and PlaceGUI - the "views") */
     private List<Observer<ClientModel, PlaceTile>> observers = new LinkedList<>();
+
+
 
     /**
      * Add a new observer.
