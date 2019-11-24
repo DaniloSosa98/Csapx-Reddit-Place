@@ -1,10 +1,12 @@
 package place.client.gui;
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -58,7 +60,7 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
      * Connection to network interface to server
      */
     boolean isReady;
-
+    private int selectedColor;
     public void init(){
         try{
             List<String> args = getParameters().getRaw();
@@ -76,7 +78,11 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
         }
     }
 
-
+    /**
+     * Creates the board
+     * @param primaryStage
+     * @throws Exception
+     */
     @Override
     public void start(Stage primaryStage) throws Exception {
         BorderPane bp = new BorderPane();
@@ -88,6 +94,16 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
         for (int row = 0; row < dimension; row++) {
             for (int col = 0; col < dimension; col++) {
                 Rectangle r = new Rectangle();
+                //Color c = this.colors(selectedColor);
+                //System.out.println(selectedColor);
+                r.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent t) {
+                        r.setFill(colors(selectedColor));
+                    }
+
+                });
+
                 r.setHeight(50);
                 r.setWidth(50);
                 int color = rand.nextInt(16);
@@ -112,6 +128,20 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
             tb.setStyle(toggleColor(i));
             tb.setPrefSize(31, 31);
             buttons.add(tb, i, 0);
+            tb.setOnMouseClicked(new EventHandler<MouseEvent>()
+            {
+                @Override
+                public void handle(MouseEvent t) {
+
+                   try {
+                        selectedColor = Integer.parseInt(tb.getText());
+                    }
+                    catch(NumberFormatException e){
+                        selectedColor = Integer.valueOf(tb.getText().charAt(0))-55;
+                    }
+                   System.out.println(selectedColor);
+                }
+            });
         }
         bp.setBottom(buttons);
         Scene scene = new Scene(bp);
@@ -133,7 +163,7 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
         }
     }
 
-    public Color colors(int color){
+    public final static Color colors(int color){
         switch (color){
             case 0:
                 return Color.BLACK;
@@ -210,4 +240,8 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
                 return null;
         }
     }
+
+
+    //EventHandler<>
+
 }
