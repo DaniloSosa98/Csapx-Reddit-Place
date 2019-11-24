@@ -103,7 +103,6 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
                     }
 
                 });
-
                 r.setHeight(50);
                 r.setWidth(50);
                 int color = rand.nextInt(16);

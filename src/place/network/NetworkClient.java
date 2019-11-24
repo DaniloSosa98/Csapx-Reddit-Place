@@ -150,7 +150,6 @@ public class NetworkClient {
 
     /** Send out login request to server */
     private void login(String username) {
-
         try {
             System.out.println(LOGIN);
             PlaceRequest<String> loginReq = new PlaceRequest<>(LOGIN, username);
