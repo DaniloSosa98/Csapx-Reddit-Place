@@ -170,9 +170,15 @@ public class NetworkClient {
             System.out.println("login successful");
         }
     }
+
+    boolean verifyMove(PlaceTile plt){
+        return true;
+    }
     public void setTile(PlaceTile plt){
-        board.setTile(plt);
-        PlaceRequest<PlaceTile> tileChangeRequest = new PlaceRequest<>(CHANGE_TILE,plt);
+        if(verifyMove(plt))
+            board.setTile(plt);
+        PlaceRequest<?> tileChangeRequest = new PlaceRequest<>(CHANGE_TILE, plt);
+
 
         try {
             networkOut.writeUnshared(tileChangeRequest);
@@ -181,7 +187,6 @@ public class NetworkClient {
             e.printStackTrace();
         }
     }
-
     // TODO add method for change tile
     // TODO add method for tile changed
 
@@ -225,10 +230,13 @@ public class NetworkClient {
     private void run() {
         while (this.goodToGo()) {
             try {
-//                setTile();
-
-//                PlaceRequest<?> req = (PlaceRequest<?>) networkIn.readObject();
-//
+                PlaceRequest<?> req = (PlaceRequest<?>) networkIn.readObject();
+                if(req.getType()==TILE_CHANGED){
+                    System.out.println("tile changed: " +req);
+                }
+                else if(req.getType()==ERROR) {
+                    this.error("usr name already exists");
+                }
 
             }
             catch (NoSuchElementException e) {
