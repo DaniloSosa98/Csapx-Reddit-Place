@@ -21,7 +21,7 @@ import java.util.Scanner;
 import static java.lang.Thread.sleep;
 
 public class PlacePTUI  extends ConsoleApplication implements Observer<ClientModel, PlaceTile> {
-
+//hello
 /** all the colors, this is ugly, let's find a better solution **/
     private static HashMap<Integer, PlaceColor> colors = new HashMap<>();
     /** Client's username */
