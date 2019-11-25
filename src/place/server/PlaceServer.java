@@ -41,7 +41,6 @@ public class PlaceServer {
                         System.out.println("player 1 connected");
                         System.out.println(in.readLine());
                     }
-
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
