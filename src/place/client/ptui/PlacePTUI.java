@@ -158,9 +158,9 @@ public class PlacePTUI  extends ConsoleApplication implements Observer<ClientMod
             System.exit(1);
         }
         else {
-            colors.put(0,PlaceColor.BLACK);
-            colors.put(5,PlaceColor.RED);
-            colors.put(4,PlaceColor.WHITE);
+            for (int i =0; i<PlaceColor.values().length;i++){
+                colors.put(i,PlaceColor.values()[i]);
+            }
             ConsoleApplication.launch(PlacePTUI.class, args);
 
         }

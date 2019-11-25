@@ -28,6 +28,8 @@ import java.io.PrintWriter;
 import java.nio.channels.NetworkChannel;
 import java.util.*;
 
+import static java.lang.Thread.sleep;
+
 public class PlaceGUI extends Application implements Observer<ClientModel, PlaceTile> {
 
     Stage stage;
@@ -64,7 +66,19 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
     boolean isReady;
     private int selectedColor;
     Rectangle[][] theInputs;
-//    ArrayList
+//
+    /**
+     * IDK IF THIS WILL BE NECCESSARY
+     * @return
+     */
+    synchronized boolean canPlace(){
+        try {
+            sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return  true;
+    }
 
     public void init(){
         try{
@@ -96,9 +110,11 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
         generateBoard(bp,gp);
 
         final ToggleGroup group = new ToggleGroup();
+//        GridPane buttons = new GridPane();
         //GridPane buttons = new GridPane();
         FlowPane fp = new FlowPane();
         fp.setPrefWrapLength(gp.getWidth());
+
         for (int i = 0; i < 16; i++) {
             ToggleButton tb = new ToggleButton();
             if (i<10){
@@ -109,10 +125,14 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
             }
             tb.setToggleGroup(group);
             tb.setStyle(toggleColor(i));
+            tb.setPrefSize(31, 31);
+//            buttons.add(tb, i, 0);
             tb.autosize();
             //tb.setPrefSize(31, 31);
             //buttons.add(tb, i, 0);
             fp.getChildren().addAll(tb);
+//            tb.setPrefSize(31, 31);
+//            buttons.add(tb, i, 0);
             tb.setOnMouseClicked(new EventHandler<MouseEvent>()
             {
                 @Override
@@ -128,6 +148,8 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
                 }
             });
         }
+//        bp.setBottom(buttons);
+
         //bp.setBottom(buttons);
         bp.setBottom(fp);
         Scene scene = new Scene(bp);
@@ -160,7 +182,13 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
                 r.setHeight(50);
 
                 r.setWidth(50);
-                int color = model.getTile(row,col).getColor().getNumber();
+                model.printBoard();
+                int color =0;
+                try {
+                    color = model.getTile(row, col).getColor().getNumber();
+                } catch (NullPointerException e){
+                    color= 3;
+                }
                 r.setFill(this.colors(color));
                 gp.add(r, col, row);
                 theInputs[row][col]=r;
@@ -172,7 +200,7 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
 
 
     void refresh(){
-        if(theInputs!=null) {
+        if(theInputs!=null&&canPlace()) {
             System.out.println("refresh");
 
             theInputs[model.getChangedTile().getRow()][model.getChangedTile().getCol()].
