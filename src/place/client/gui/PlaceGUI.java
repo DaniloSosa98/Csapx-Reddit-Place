@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
@@ -26,6 +27,7 @@ import place.network.PlaceRequest;
 
 import java.io.PrintWriter;
 import java.nio.channels.NetworkChannel;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static java.lang.Thread.sleep;
@@ -170,12 +172,42 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
                 //System.out.println(selectedColor);
                 final int iRow = row;
                 final int iColl = col;
+                r.setOnMouseMoved(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent mouseEvent) {
+
+                        PlaceTile currTile = model.getTile(iRow, iColl);
+
+                        Rectangle colorRep = new Rectangle();
+                        colorRep.setWidth(20);
+                        colorRep.setHeight(20);
+                        Color currColor = colors(currTile.getColor().getNumber());
+                        colorRep.setFill(currColor);
+
+                        // get time the tile was last changed
+                        long timeOfClick = currTile.getTime();
+                        SimpleDateFormat dateAndTime = new SimpleDateFormat("dd/MMM/yyyy HH:MM:SS");
+                        Date resultDate = new Date(timeOfClick);
+                        String date =  dateAndTime.format(resultDate);
+
+                        Tooltip tooltip = new Tooltip("(" + iRow + ", " + iColl + ")"+ "\n"
+                                + currTile.getOwner() + "\n"
+                                + date);
+                        tooltip.setGraphic(colorRep);
+                        Tooltip.install(r, tooltip);
+                    }
+                });
 
                 r.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent t) {
 //                        r.setFill(colors(selectedColor));
-                        serverConn.setTile(new PlaceTile(iRow,iColl,username,convertToPlaceColor(selectedColor)));
+                        PlaceTile newTile = new PlaceTile(iRow,iColl,username,convertToPlaceColor(selectedColor));
+                        serverConn.setTile(newTile);
+                        newTile.setOwner(username);
+                        long timeOfClick = System.currentTimeMillis();
+                        newTile.setTime(timeOfClick);
+
                     }
 
                 });
