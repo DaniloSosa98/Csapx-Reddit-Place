@@ -208,6 +208,7 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
                         long timeOfClick = System.currentTimeMillis();
                         newTile.setTime(timeOfClick);
 
+
                     }
 
                 });
