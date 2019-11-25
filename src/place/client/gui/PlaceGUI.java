@@ -17,6 +17,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import place.PlaceColor;
 import place.PlaceException;
 import place.PlaceTile;
@@ -157,6 +158,15 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
         Scene scene = new Scene(bp);
         primaryStage.setScene(scene);
         primaryStage.setTitle(this.username);
+
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent t) {
+                Platform.exit();
+                System.exit(0);
+            }
+        });
+
         primaryStage.show();
     }
 
@@ -186,7 +196,7 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
 
                         // get time the tile was last changed
                         long timeOfClick = currTile.getTime();
-                        SimpleDateFormat dateAndTime = new SimpleDateFormat("dd/MMM/yyyy HH:MM:SS");
+                        SimpleDateFormat dateAndTime = new SimpleDateFormat("dd/MM/yy \nHH:mm:ss");
                         Date resultDate = new Date(timeOfClick);
                         String date =  dateAndTime.format(resultDate);
 
