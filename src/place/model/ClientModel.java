@@ -17,7 +17,7 @@ import java.util.List;
 public class ClientModel {
     /** the actual board that holds the tiles */
     private PlaceBoard board;
-
+    public boolean isGui;
     private PlaceTile changedTile;
 
     /** observers of the model (PlacePTUI and PlaceGUI - the "views") */
@@ -26,13 +26,13 @@ public class ClientModel {
     public  PlaceTile getTile(int x, int y){
         return board.getTile(x,y);
     }
-    public  void setChangedTile(int x, int y){
-
-        changedTile= getTile(x,y);
-        notifyObservers(changedTile);
+    public  void setChangedTile(PlaceTile pt){
+        board.setTile(pt);
+        changedTile = pt;
+        if(isGui)
+            notifyObservers(null);
     }
     public PlaceTile getChangedTile(){
-
         return  changedTile;
     }
 
@@ -57,8 +57,11 @@ public class ClientModel {
      * Notify observers the model has changed.
      */
     private void notifyObservers(PlaceTile tile){
+        System.err.println(tile);
         for (Observer<ClientModel, PlaceTile> observer: observers) {
+            System.err.println("observer");
             observer.update(this, tile);
+            System.err.println(observer);
         }
     }
     public int getDimension(){

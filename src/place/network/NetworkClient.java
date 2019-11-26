@@ -143,6 +143,7 @@ public class NetworkClient {
             System.out.println("hello board");
             board = (PlaceBoard) req.getData();
             model.setBoard(board);
+            model.printBoard();
             //TODO GET THIS TO OVERRIDE THE MODEL BOARD, AND THEN GET THE MODEL BOARD TO PRINT
         }
 
@@ -170,15 +171,9 @@ public class NetworkClient {
         }
     }
 
-    boolean verifyMove(PlaceTile plt){
-        return true;
-    }
     public void setTile(PlaceTile plt){
-        if(verifyMove(plt))
-            board.setTile(plt);
+        board.setTile(plt);
         PlaceRequest<?> tileChangeRequest = new PlaceRequest<>(CHANGE_TILE, plt);
-
-
         try {
             networkOut.writeUnshared(tileChangeRequest);
             networkOut.flush();
@@ -232,9 +227,12 @@ public class NetworkClient {
                 PlaceRequest<?> req = (PlaceRequest<?>) networkIn.readObject();
                 if(req.getType()==TILE_CHANGED){
                     System.out.println("tile changed: " +req);
-                    model.printBoard();
                     PlaceTile pt = (PlaceTile) req.getData();
-                    model.setChangedTile( pt.getRow(),pt.getCol());
+                    System.err.println("DSF");
+                    model.setChangedTile( pt);
+                    System.err.println("DSasF");
+                    model.printBoard();
+
                 }
                 else if(req.getType()==ERROR) {
                     this.error("usr name already exists");

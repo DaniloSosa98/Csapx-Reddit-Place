@@ -173,6 +173,7 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
     void generateBoard(BorderPane bp, GridPane gp){
 
         int dimension = model.getDimension();
+        model.isGui =true;
         Random rand = new Random();
         theInputs = new Rectangle[dimension][dimension];
         for (int row = 0; row < dimension; row++) {
@@ -251,9 +252,6 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
 
             System.out.println("refresh");
         }
-//        System.out.println("DSF");
-
-
     }
 
 

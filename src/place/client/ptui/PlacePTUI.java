@@ -54,7 +54,10 @@ public class PlacePTUI  extends ConsoleApplication implements Observer<ClientMod
     int timer=1;
     @Override
     public void update(ClientModel model, PlaceTile tile) {
+        System.err.println("Fsdfssd");
         refresh();
+        System.err.println("Fsdfssd");
+
     }
 
     /**
@@ -122,10 +125,8 @@ public class PlacePTUI  extends ConsoleApplication implements Observer<ClientMod
     private void refresh() {
         if ( isReady) {
             System.out.println("SDF");
-            model.printBoard();
 
             do {
-                model.printBoard();
                 if(canPlace()) {
                     this.userOut.flush();
                     System.out.println("Change tile: row col color?");
@@ -133,7 +134,7 @@ public class PlacePTUI  extends ConsoleApplication implements Observer<ClientMod
                     int col = this.userIn.nextInt();
                     int color = userIn.nextInt();
                     userOut.println(colors);
-
+                    System.err.println("kmoimoiioio");
                     PlaceColor targetColor = colors.get(color);
 
                     userOut.println(targetColor);
