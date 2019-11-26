@@ -20,6 +20,13 @@ import java.util.Scanner;
 
 import static java.lang.Thread.sleep;
 
+/**
+ *
+ *  @author Aubrey Tarmu
+ *  @author Maham imtiaz
+ *  @author Danilo Sosa
+ */
+
 public class PlacePTUI  extends ConsoleApplication implements Observer<ClientModel, PlaceTile> {
 //hello
 /** all the colors, this is ugly, let's find a better solution **/
@@ -76,8 +83,8 @@ public class PlacePTUI  extends ConsoleApplication implements Observer<ClientMod
             // Get host info from command line
             String host = args.get( 0 );
             int port = Integer.parseInt( args.get( 1 ) );
-            String username = args.get(2);
-
+            username = args.get(2);
+            System.err.println(username);
             this.serverConn = new NetworkClient( host, port, model, username);
 
         }
@@ -106,10 +113,6 @@ public class PlacePTUI  extends ConsoleApplication implements Observer<ClientMod
 
     }
 
-    /**
-     * IDK IF THIS WILL BE NECCESSARY
-     * @return
-     */
     synchronized boolean canPlace(){
         try {
             sleep(500);
@@ -133,11 +136,11 @@ public class PlacePTUI  extends ConsoleApplication implements Observer<ClientMod
                     int row = this.userIn.nextInt();
                     int col = this.userIn.nextInt();
                     int color = userIn.nextInt();
-                    userOut.println(colors);
-                    System.err.println("kmoimoiioio");
+//                    userOut.println(colors);
+//                    System.err.println("kmoimoiioio");
                     PlaceColor targetColor = colors.get(color);
 
-                    userOut.println(targetColor);
+                    System.err.println(username);
                     PlaceTile newTile = new PlaceTile(row, col, username, targetColor);
                     serverConn.setTile(newTile);
                 }

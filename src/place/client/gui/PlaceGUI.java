@@ -33,6 +33,15 @@ import java.util.*;
 
 import static java.lang.Thread.sleep;
 
+/**
+ *
+ *
+ * @author Aubrey Tarmu
+ * @author Maham imtiaz
+ * @author Danilo Sosa
+ *
+ */
+
 public class PlaceGUI extends Application implements Observer<ClientModel, PlaceTile> {
 
     Stage stage;

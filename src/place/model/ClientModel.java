@@ -13,6 +13,9 @@ import java.util.List;
  * side applications (PTUI, GUI, bots) are observers of this model.
  *
  * @author Sean Strout @ RIT CS
+ *  @author Aubrey Tarmu
+ *  @author Maham imtiaz
+ *  @author Danilo Sosa
  */
 public class ClientModel {
     /** the actual board that holds the tiles */

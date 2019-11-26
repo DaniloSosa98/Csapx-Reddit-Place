@@ -1,4 +1,4 @@
-package place.Server;
+package place.server;
 
 import place.PlaceTile;
 import place.network.PlaceRequest;
@@ -17,9 +17,14 @@ public class PlaceClientThread extends Thread {
 
     public PlaceClientThread(Socket socket, place.server.PlaceServer server){
         try {
+            System.err.println("Dfs");
             this.socket = socket;
+            System.err.println("Dfs");
             clientOut = new ObjectOutputStream(socket.getOutputStream());
+            System.err.println("Dfs");
+
             clientIn = new ObjectInputStream(socket.getInputStream());
+            System.err.println("Dfs");
             this.placeServer = server;
 
         } catch (IOException e) {
@@ -64,12 +69,23 @@ public class PlaceClientThread extends Thread {
         }
 
     }
+    synchronized boolean canPlace(){
+        try {
+            sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return  true;
+    }
+
 
     public void updateBoard(PlaceTile updateTile){
         try{
-            System.err.println("sending out the change");
-            clientOut.writeObject(new PlaceRequest<>(TILE_CHANGED,updateTile));
-            clientOut.flush();
+            if(canPlace()) {
+                System.err.println("sending out the change");
+                clientOut.writeObject(new PlaceRequest<>(TILE_CHANGED, updateTile));
+                clientOut.flush();
+            }
         }
         catch (IOException e){
 

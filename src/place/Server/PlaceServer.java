@@ -1,16 +1,13 @@
 package place.server;
 
-import javafx.scene.paint.Color;
 import place.PlaceBoard;
 import place.PlaceColor;
 import place.PlaceTile;
-import place.Server.PlaceClientThread;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
-import java.util.Set;
 
 /**
  * The Place server is run on the command line as:
