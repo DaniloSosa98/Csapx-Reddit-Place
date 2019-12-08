@@ -168,7 +168,7 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
         SceneGestures sceneGestures = new SceneGestures(canvas);
         scene.addEventFilter( ScrollEvent.ANY, sceneGestures.getOnScrollEventHandler());
         primaryStage.setScene(scene);
-        primaryStage.setTitle(this.username);
+        primaryStage.setTitle("Place: "+this.username);
 
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
