@@ -141,7 +141,7 @@ public class PlacePTUI  extends ConsoleApplication implements Observer<ClientMod
                     PlaceColor targetColor = colors.get(color);
 
                     System.err.println(username);
-                    PlaceTile newTile = new PlaceTile(row, col, username, targetColor);
+                    PlaceTile newTile = new PlaceTile(row, col, username, targetColor, System.currentTimeMillis());
                     serverConn.setTile(newTile);
                 }
             } while (true);

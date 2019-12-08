@@ -3,18 +3,18 @@ package place.client.gui;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -27,7 +27,6 @@ import place.network.NetworkClient;
 import place.network.PlaceRequest;
 
 import java.io.PrintWriter;
-import java.nio.channels.NetworkChannel;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -117,15 +116,18 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
      */
     @Override
     public void start(Stage primaryStage) throws Exception {
+        Group group = new Group();
+        PannableCanvas canvas = new PannableCanvas();
+        NodeGestures nodeGestures = new NodeGestures(canvas);
         BorderPane bp = new BorderPane();
         GridPane gp = new GridPane();
         generateBoard(bp,gp);
+        bp.setStyle("-fx-base: black;");
 
-        final ToggleGroup group = new ToggleGroup();
-//        GridPane buttons = new GridPane();
-        //GridPane buttons = new GridPane();
+        final ToggleGroup Tgroup = new ToggleGroup();
         FlowPane fp = new FlowPane();
-        fp.setPrefWrapLength(gp.getWidth());
+        fp.prefWrapLengthProperty().bind(bp.widthProperty());
+        gp.prefWidthProperty().bind(fp.prefWrapLengthProperty());
 
         for (int i = 0; i < 16; i++) {
             ToggleButton tb = new ToggleButton();
@@ -135,16 +137,11 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
                 char c = (char)(i+55);
                 tb.setText(String.valueOf(c));
             }
-            tb.setToggleGroup(group);
+            tb.setToggleGroup(Tgroup);
             tb.setStyle(toggleColor(i));
             tb.setPrefSize(31, 31);
-//            buttons.add(tb, i, 0);
             tb.autosize();
-            //tb.setPrefSize(31, 31);
-            //buttons.add(tb, i, 0);
             fp.getChildren().addAll(tb);
-//            tb.setPrefSize(31, 31);
-//            buttons.add(tb, i, 0);
             tb.setOnMouseClicked(new EventHandler<MouseEvent>()
             {
                 @Override
@@ -160,11 +157,16 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
                 }
             });
         }
-//        bp.setBottom(buttons);
-
-        //bp.setBottom(buttons);
         bp.setBottom(fp);
-        Scene scene = new Scene(bp);
+        canvas.getChildren().add(bp);
+        canvas.setPrefSize(bp.getHeight(), bp.getWidth());
+        group.getChildren().add(canvas);
+        ScrollPane sp = new ScrollPane();
+        sp.setContent(group);
+        sp.setStyle("-fx-base: white;");
+        Scene scene = new Scene(sp);
+        SceneGestures sceneGestures = new SceneGestures(canvas);
+        scene.addEventFilter( ScrollEvent.ANY, sceneGestures.getOnScrollEventHandler());
         primaryStage.setScene(scene);
         primaryStage.setTitle(this.username);
 
@@ -180,7 +182,6 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
     }
 
     void generateBoard(BorderPane bp, GridPane gp){
-
         int dimension = model.getDimension();
         model.isGui =true;
         Random rand = new Random();
@@ -206,7 +207,7 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
 
                         // get time the tile was last changed
                         long timeOfClick = currTile.getTime();
-                        SimpleDateFormat dateAndTime = new SimpleDateFormat("dd/MM/yy \nHH:mm:ss");
+                        SimpleDateFormat dateAndTime = new SimpleDateFormat("MM/dd/yy \nHH:mm:ss");
                         Date resultDate = new Date(timeOfClick);
                         String date =  dateAndTime.format(resultDate);
 
@@ -222,7 +223,7 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
                     @Override
                     public void handle(MouseEvent t) {
 //                        r.setFill(colors(selectedColor));
-                        PlaceTile newTile = new PlaceTile(iRow,iColl,username,convertToPlaceColor(selectedColor));
+                        PlaceTile newTile = new PlaceTile(iRow,iColl,username,convertToPlaceColor(selectedColor),System.currentTimeMillis());
                         serverConn.setTile(newTile);
                         newTile.setOwner(username);
                         long timeOfClick = System.currentTimeMillis();
@@ -232,9 +233,9 @@ public class PlaceGUI extends Application implements Observer<ClientModel, Place
                     }
 
                 });
-                r.setHeight(50);
-
-                r.setWidth(50);
+                double recsize = 400/dimension;
+                r.setHeight(recsize);
+                r.setWidth(recsize);
                 model.printBoard();
                 int color =0;
                 try {
